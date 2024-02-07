@@ -43,7 +43,7 @@ class EventController extends Controller
                 'start_time' => 'required|date',
                 'end_time' => 'required|date|after:start_time',
             ]),
-            'user_id' => $request->user()->id
+            'user_id' => $request->user()->id   
         ]);
 
         return new EventResource($this->loadRelationship($event));
