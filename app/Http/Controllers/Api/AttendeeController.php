@@ -4,16 +4,26 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AttendeeResource;
+use App\Http\Traits\CanLoadRelationship;
 use App\Models\Attendee;
 use App\Models\Event;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class AttendeeController extends Controller
 {
 
+    use CanLoadRelationship, HasApiTokens, HasFactory, Notifiable;
+    private array $relations = ['user'];
+
+
     public function index(Event $event)
     {
-        $attendees = $event->attendees()->latest();
+        $attendees = $this->loadRelationships(
+            $event->attendees()->latest()
+        );
 
         return AttendeeResource::collection(
             $attendees->paginate()
@@ -25,13 +35,18 @@ class AttendeeController extends Controller
         $attendee = $event->attendees()->create([
             'user_id' => 1
         ]);
+        $attendee = $this->loadRelationships(
+            $event->attendees()->create([
+                'user_id' => 1
+            ])
+        );
 
         return new AttendeeResource($attendee);
     }
 
     public function show(Event $event, Attendee $attendee)
     {   
-        return new AttendeeResource($attendee);
+        return new AttendeeResource($this->loadRelationship($attendee));
     }
 
     public function update(Request $request, string $id)
