@@ -18,6 +18,9 @@ class AttendeeController extends Controller
     use CanLoadRelationship, HasApiTokens, HasFactory, Notifiable;
     private array $relations = ['user'];
 
+    public function __construct() {
+        $this->middleware('auth:sanctum')->except(['index', 'show', 'update']);
+    }
 
     public function index(Event $event)
     {
@@ -54,8 +57,9 @@ class AttendeeController extends Controller
         //
     }
 
-    public function destroy(string $event, Attendee $attendee)
+    public function destroy(Event $event, Attendee $attendee)
     {
+        $this->authorize('delete-attende', [$event, $attendee]);
         $attendee->delete();
 
         return response(status: 204);
