@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class EventReminderNotification extends Notification
+class EventReminderNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -46,7 +46,7 @@ class EventReminderNotification extends Notification
     }
 
     /**
-     * Get the array representation of the notification.
+     * Get the array representation of the notification.  
      *
      * @return array<string, mixed>
      */
